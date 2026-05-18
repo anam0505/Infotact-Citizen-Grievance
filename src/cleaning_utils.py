@@ -3,23 +3,29 @@ import string
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from config import CUSTOM_STOPWORDS
 
-# Download once
 nltk.download("stopwords")
 nltk.download("wordnet")
 
 lemmatizer = WordNetLemmatizer()
+
 stop_words = set(stopwords.words("english"))
+stop_words.update(CUSTOM_STOPWORDS)
 
 def clean_text(text):
     """
-    Clean complaint text:
+    Cleans grievance text:
     - lowercase
-    - remove urls/emails/phone numbers/html
+    - remove URLs
+    - remove emails
+    - remove phone numbers
+    - remove HTML
     - remove punctuation
     - remove stopwords
     - lemmatize words
     """
+
     if not isinstance(text, str):
         return ""
 
@@ -33,7 +39,9 @@ def clean_text(text):
     text = text.translate(str.maketrans("", "", string.punctuation))
 
     words = text.split()
+
     words = [word for word in words if word not in stop_words]
+
     words = [lemmatizer.lemmatize(word) for word in words]
 
     return " ".join(words)
