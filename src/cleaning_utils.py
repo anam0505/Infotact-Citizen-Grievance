@@ -13,17 +13,38 @@ lemmatizer = WordNetLemmatizer()
 stop_words = set(stopwords.words("english"))
 stop_words.update(CUSTOM_STOPWORDS)
 
+
+def remove_urls(text):
+    return re.sub(r"http\S+|www\S+", "", text)
+
+
+def remove_emails(text):
+    return re.sub(r"\S+@\S+", "", text)
+
+
+def remove_phone_numbers(text):
+    return re.sub(r"\d{10}", "", text)
+
+
+def remove_html(text):
+    return re.sub(r"<.*?>", "", text)
+
+
+def remove_punctuation(text):
+    return text.translate(str.maketrans("", "", string.punctuation))
+
+
+def remove_stopwords(words):
+    return [word for word in words if word not in stop_words]
+
+
+def lemmatize_words(words):
+    return [lemmatizer.lemmatize(word) for word in words]
+
+
 def clean_text(text):
     """
-    Cleans grievance text:
-    - lowercase
-    - remove URLs
-    - remove emails
-    - remove phone numbers
-    - remove HTML
-    - remove punctuation
-    - remove stopwords
-    - lemmatize words
+    Main text preprocessing function
     """
 
     if not isinstance(text, str):
@@ -31,17 +52,15 @@ def clean_text(text):
 
     text = text.lower()
 
-    text = re.sub(r"http\S+|www\S+", "", text)
-    text = re.sub(r"\S+@\S+", "", text)
-    text = re.sub(r"\d{10}", "", text)
-    text = re.sub(r"<.*?>", "", text)
-
-    text = text.translate(str.maketrans("", "", string.punctuation))
+    text = remove_urls(text)
+    text = remove_emails(text)
+    text = remove_phone_numbers(text)
+    text = remove_html(text)
+    text = remove_punctuation(text)
 
     words = text.split()
 
-    words = [word for word in words if word not in stop_words]
-
-    words = [lemmatizer.lemmatize(word) for word in words]
+    words = remove_stopwords(words)
+    words = lemmatize_words(words)
 
     return " ".join(words)
