@@ -25,6 +25,12 @@ def load_data(filepath):
     print("\nDuplicate Rows:")
     print(df.duplicated().sum())
 
+    print("\nComplaint Category Distribution:")
+    print(df["issue_type"].value_counts())
+
+    print("\nComplaint Description Length:")
+    print(df["issue_description"].str.len().describe())
+
     return df
 
 
